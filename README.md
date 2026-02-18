@@ -15,10 +15,10 @@ A full-featured, beautifully designed QR code generator with URL shortening, sca
 - **Copy to Clipboard** — Instant clipboard copy
 - **Batch Generation** — Generate multiple QR codes at once
 - **History** — Automatically saves generated QR codes (localStorage)
-- **URL Shortening** — Trackable short links via `yoursite.com/r/abc123`
-- **Scan Analytics** — Dashboard with charts for scan tracking (Chart.js)
-- **Visitor Tracking** — Page visitor analytics with geo, browser, OS, device data
-- **Auth Protection** — Login-protected analytics dashboards
+- **URL Shortening** — All URL QR codes automatically use trackable short links
+- **Scan Analytics** — Public dashboard with charts for scan tracking (Chart.js)
+- **Visitor Tracking** — Admin-only page visitor analytics with geo, browser, OS, device data
+- **Auth Protection** — Login-protected visitor dashboard (admin sessions are not tracked)
 - **Dark Mode** — Toggle between light and dark themes
 - **Glassmorphism Design** — Modern glass-card UI with animated orbs
 - **SEO Optimized** — Meta tags, Open Graph, Twitter Cards, JSON-LD, sitemap
@@ -61,9 +61,9 @@ qrcode-generator/
 │   ├── login.php           # Login/logout/check API
 │   ├── helpers.php         # Shared helper functions (IP, geo, browser parsing)
 │   ├── shorten.php         # URL shortening API
-│   ├── stats.php           # Scan analytics API (auth-protected)
-│   ├── track.php           # Visitor tracking API
-│   └── visitor-stats.php   # Visitor analytics API (auth-protected)
+│   ├── stats.php           # Scan analytics API (public)
+│   ├── track.php           # Visitor tracking API (skips admin)
+│   └── visitor-stats.php   # Visitor analytics API (admin-only)
 └── r/
     └── index.php           # Short URL redirect handler with scan logging
 ```
@@ -79,7 +79,7 @@ qrcode-generator/
 ### Step 1 — Clone & Upload
 
 ```bash
-git clone https://github.com/anasabdur/qrcode-generator.git
+git clone https://github.com/anasark/qrcode-generator.git
 ```
 
 Copy the project files to your web server's document root:
@@ -153,22 +153,24 @@ Try generating a QR code for any URL to confirm everything works.
 ### URL Shortening & Tracking
 
 1. Select **URL** type and enter a URL
-2. Check **"Use trackable short link"**
+2. A trackable short link is automatically created
 3. The QR code will point to `yoursite.com/r/abc123`
 4. Every scan is logged with IP, location, browser, OS, device, and referrer
 
 ### Analytics Dashboards
 
-- **Scan Analytics** — `https://your-domain.com/stats.html`
-- **Visitor Analytics** — `https://your-domain.com/visitors.html`
+- **Scan Analytics** — `https://your-domain.com/stats.html` (public — anyone can view scan stats for a short code)
+- **Visitor Analytics** — `https://your-domain.com/visitors.html` (admin-only — requires login)
 
-Both dashboards require login with the admin credentials from `config.php`.
+Admin sessions are persistent (lifetime) and admin visits are not tracked.
 
 ## Security Notes
 
 - `api/config.php` is blocked from direct web access via `.htaccess` (Apache) — for Nginx, add an equivalent `location` block
 - `api/auth.php` is also blocked from direct access
-- Analytics APIs require session authentication
+- Visitor analytics API requires session authentication
+- Scan analytics API is public (per short code only)
+- Admin sessions are not tracked as page visitors
 - `api/config.php` is excluded from Git via `.gitignore`
 - Always use HTTPS in production
 

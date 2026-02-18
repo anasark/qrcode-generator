@@ -4,7 +4,21 @@
    Include this in any protected API endpoint
    =================================================== */
 
+// Keep session data alive for 1 year on server side
+ini_set('session.gc_maxlifetime', 60 * 60 * 24 * 365);
+
+session_set_cookie_params([
+    'lifetime' => 60 * 60 * 24 * 365, // 1 year
+    'path' => '/',
+    'httponly' => true,
+    'samesite' => 'Lax',
+]);
 session_start();
+
+// Extend session lifetime on every request
+if (!empty($_SESSION['admin_logged_in'])) {
+    setcookie(session_name(), session_id(), time() + 60 * 60 * 24 * 365, '/');
+}
 
 require_once __DIR__ . '/config.php';
 

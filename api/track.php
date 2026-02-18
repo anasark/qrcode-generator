@@ -49,6 +49,13 @@ if ($deviceType === 'Bot') {
     exit;
 }
 
+// Skip admin sessions
+session_start();
+if (!empty($_SESSION['admin_logged_in'])) {
+    echo json_encode(['ok' => true, 'skipped' => 'admin']);
+    exit;
+}
+
 $geo = getGeoData($ip);
 
 try {

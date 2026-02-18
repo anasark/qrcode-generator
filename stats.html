@@ -30,13 +30,6 @@
 </head>
 <body class="min-h-screen font-sans bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-indigo-950 text-gray-800 dark:text-gray-100">
 
-<!-- Auth gate: redirect to login if not authenticated -->
-<script>
-fetch('/api/login.php',{credentials:'same-origin'}).then(r=>r.json()).then(d=>{
-  if(!d.authenticated) location.replace('/login.html?redirect='+encodeURIComponent(location.pathname+location.search));
-}).catch(()=>location.replace('/login.html?redirect='+encodeURIComponent(location.pathname+location.search)));
-</script>
-
 <div id="app">
   <!-- Navbar -->
   <nav class="sticky top-0 z-50 backdrop-blur-xl bg-white/70 dark:bg-gray-900/70 border-b border-gray-200/50 dark:border-gray-700/50">
@@ -52,8 +45,6 @@ fetch('/api/login.php',{credentials:'same-origin'}).then(r=>r.json()).then(d=>{
         </div>
         <div class="flex items-center gap-3">
           <a href="/" class="text-sm text-gray-500 hover:text-primary-500 transition-colors font-medium">&larr; Back to Generator</a>
-          <a href="/visitors.html" class="text-sm text-emerald-500 hover:text-emerald-600 transition-colors font-medium">Visitors</a>
-          <button @click="logout" class="text-sm text-red-400 hover:text-red-500 transition-colors font-medium">Logout</button>
           <button @click="darkMode = !darkMode" class="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
             <svg v-if="!darkMode" class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
             <svg v-else class="w-5 h-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
@@ -329,8 +320,7 @@ createApp({
       error.value = '';
 
       try {
-        const resp = await fetch(`/api/stats.php?code=${encodeURIComponent(code)}`, { credentials: 'same-origin' });
-        if (resp.status === 401) { location.replace('/login.html?redirect=' + encodeURIComponent(location.pathname + location.search)); return; }
+        const resp = await fetch(`/api/stats.php?code=${encodeURIComponent(code)}`);
         if (!resp.ok) {
           const data = await resp.json().catch(() => ({}));
           throw new Error(data.error || 'Failed to load stats');
@@ -484,16 +474,11 @@ createApp({
       return Math.round((value / total) * 100);
     }
 
-    function logout() {
-      fetch('/api/login.php', { method: 'DELETE', credentials: 'same-origin' })
-        .finally(() => location.replace('/login.html'));
-    }
-
     return {
       darkMode, searchCode, loading, error, stats,
       chartDaily, chartDevices, chartBrowsers, chartOS,
       topCountry, topDevice,
-      loadStats, formatDate, maskIP, getPercent, logout,
+      loadStats, formatDate, maskIP, getPercent,
     };
   }
 }).mount('#app');
