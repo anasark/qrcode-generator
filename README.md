@@ -4,6 +4,8 @@ A full-featured, beautifully designed QR code generator with URL shortening, sca
 
 ![QR Code Generator](https://img.shields.io/badge/Vue%203-CDN-42b883?logo=vuedotjs) ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-CDN-06b6d4?logo=tailwindcss) ![PHP](https://img.shields.io/badge/PHP-7.4+-777bb4?logo=php) ![MySQL](https://img.shields.io/badge/MySQL-5.7+-4479a1?logo=mysql)
 
+**Live Demo:** [https://qrcode.anasabdur.com](https://qrcode.anasabdur.com/)
+
 ## Features
 
 - **6 QR Code Types** — URL, Text, Email, Phone, WiFi, vCard
