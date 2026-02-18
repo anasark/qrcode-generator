@@ -1,0 +1,6 @@
+# https://qrcode.anasabdur.com
+User-agent: *
+Allow: /
+Disallow:
+
+Sitemap: https://qrcode.anasabdur.com/sitemap.xml

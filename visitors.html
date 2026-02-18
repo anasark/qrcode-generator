@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visitor Analytics — Page Traffic Dashboard</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          colors: {
+            primary: { 50:'#eef2ff',100:'#e0e7ff',200:'#c7d2fe',300:'#a5b4fc',400:'#818cf8',500:'#6366f1',600:'#4f46e5',700:'#4338ca',800:'#3730a3',900:'#312e81' },
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+</head>
+<body class="min-h-screen font-sans bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-indigo-950 text-gray-800 dark:text-gray-100">
+
+<!-- Auth gate: redirect to login if not authenticated -->
+<script>
+fetch('/api/login.php',{credentials:'same-origin'}).then(r=>r.json()).then(d=>{
+  if(!d.authenticated) location.replace('/login.html?redirect='+encodeURIComponent(location.pathname+location.search));
+}).catch(()=>location.replace('/login.html?redirect='+encodeURIComponent(location.pathname+location.search)));
+</script>
+
+<div id="app">
+  <!-- Navbar -->
+  <nav class="sticky top-0 z-50 backdrop-blur-xl bg-white/70 dark:bg-gray-900/70 border-b border-gray-200/50 dark:border-gray-700/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center gap-3">
+          <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/25">
+              <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            </div>
+            <h1 class="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">Visitor Analytics</h1>
+          </a>
+        </div>
+        <div class="flex items-center gap-3">
+          <a href="/" class="text-sm text-gray-500 hover:text-primary-500 transition-colors font-medium">&larr; Generator</a>
+          <a href="/stats.html" class="text-sm text-gray-500 hover:text-primary-500 transition-colors font-medium">QR Stats</a>
+          <button @click="logout" class="text-sm text-red-400 hover:text-red-500 transition-colors font-medium">Logout</button>
+          <button @click="darkMode = !darkMode" class="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            <svg v-if="!darkMode" class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+            <svg v-else class="w-5 h-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Loading State -->
+    <div v-if="loading" class="text-center py-20">
+      <svg class="w-10 h-10 animate-spin mx-auto text-primary-500" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+      </svg>
+      <p class="text-gray-400 mt-4">Loading visitor data...</p>
+    </div>
+
+    <!-- Error State -->
+    <div v-if="error" class="glass-card p-8 text-center">
+      <svg class="w-16 h-16 mx-auto mb-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
+      <p class="text-red-500 font-medium">{{ error }}</p>
+      <button @click="loadStats" class="btn-primary mt-4 px-6">Retry</button>
+    </div>
+
+    <!-- Dashboard -->
+    <div v-if="stats && !loading">
+      <!-- Summary Cards -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="glass-card p-5 text-center group hover:scale-[1.02] transition-transform">
+          <p class="text-3xl font-extrabold bg-gradient-to-r from-primary-500 to-purple-500 bg-clip-text text-transparent">{{ stats.summary.total_visits.toLocaleString() }}</p>
+          <p class="text-sm text-gray-500 mt-1">Total Pageviews</p>
+        </div>
+        <div class="glass-card p-5 text-center group hover:scale-[1.02] transition-transform">
+          <p class="text-3xl font-extrabold bg-gradient-to-r from-green-500 to-emerald-500 bg-clip-text text-transparent">{{ stats.summary.today_visits.toLocaleString() }}</p>
+          <p class="text-sm text-gray-500 mt-1">Today</p>
+        </div>
+        <div class="glass-card p-5 text-center group hover:scale-[1.02] transition-transform">
+          <p class="text-3xl font-extrabold bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent">{{ stats.summary.unique_visitors.toLocaleString() }}</p>
+          <p class="text-sm text-gray-500 mt-1">Unique IPs</p>
+        </div>
+        <div class="glass-card p-5 text-center group hover:scale-[1.02] transition-transform">
+          <p class="text-3xl font-extrabold bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent">{{ stats.summary.unique_sessions.toLocaleString() }}</p>
+          <p class="text-sm text-gray-500 mt-1">Sessions</p>
+        </div>
+      </div>
+
+      <!-- Charts Row 1 -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div class="glass-card p-6">
+          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Visitors (Last 30 Days)</h3>
+          <canvas ref="chartDaily" height="200"></canvas>
+        </div>
+        <div class="glass-card p-6">
+          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Hourly Distribution</h3>
+          <canvas ref="chartHourly" height="200"></canvas>
+        </div>
+      </div>
+
+      <!-- Charts Row 2 -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div class="glass-card p-6">
+          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Devices</h3>
+          <canvas ref="chartDevices" height="220"></canvas>
+        </div>
+        <div class="glass-card p-6">
+          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Browsers</h3>
+          <canvas ref="chartBrowsers" height="220"></canvas>
+        </div>
+        <div class="glass-card p-6">
+          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Operating Systems</h3>
+          <canvas ref="chartOS" height="220"></canvas>
+        </div>
+      </div>
+
+      <!-- Tables Row -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Top Countries -->
+        <div class="glass-card p-6">
+          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Top Countries</h3>
+          <div class="space-y-2">
+            <div v-for="item in stats.top_countries" :key="item.country" class="flex items-center justify-between p-2.5 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+              <span class="text-sm font-medium">{{ item.country }}</span>
+              <div class="flex items-center gap-2">
+                <div class="w-24 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full" :style="{ width: pct(item.count, stats.summary.total_visits) + '%' }"></div>
+                </div>
+                <span class="text-xs text-gray-500 w-8 text-right">{{ item.count }}</span>
+              </div>
+            </div>
+            <p v-if="!stats.top_countries.length" class="text-sm text-gray-400 text-center py-4">No data yet</p>
+          </div>
+        </div>
+
+        <!-- Top Cities -->
+        <div class="glass-card p-6">
+          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Top Cities</h3>
+          <div class="space-y-2">
+            <div v-for="item in stats.top_cities" :key="item.city + item.country" class="flex items-center justify-between p-2.5 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+              <div>
+                <span class="text-sm font-medium">{{ item.city }}</span>
+                <span class="text-xs text-gray-400 ml-1">{{ item.country }}</span>
+              </div>
+              <span class="text-xs text-gray-500 font-medium bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded-full">{{ item.count }}</span>
+            </div>
+            <p v-if="!stats.top_cities.length" class="text-sm text-gray-400 text-center py-4">No data yet</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Second Tables Row -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Top Pages -->
+        <div class="glass-card p-6">
+          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Top Pages</h3>
+          <div class="space-y-2">
+            <div v-for="item in stats.top_pages" :key="item.page" class="flex items-center justify-between p-2.5 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+              <span class="text-sm font-medium font-mono truncate max-w-[180px]" :title="item.page">{{ item.page }}</span>
+              <span class="text-xs text-gray-500 font-medium bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded-full">{{ item.count }}</span>
+            </div>
+            <p v-if="!stats.top_pages.length" class="text-sm text-gray-400 text-center py-4">No data yet</p>
+          </div>
+        </div>
+
+        <!-- Referrers -->
+        <div class="glass-card p-6">
+          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Referrers</h3>
+          <div class="space-y-2">
+            <div v-for="item in stats.referrers" :key="item.referer" class="flex items-center justify-between p-2.5 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+              <span class="text-sm font-medium truncate max-w-[180px]" :title="item.referer">{{ item.referer }}</span>
+              <span class="text-xs text-gray-500 font-medium bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded-full">{{ item.count }}</span>
+            </div>
+            <p v-if="!stats.referrers.length" class="text-sm text-gray-400 text-center py-4">No data yet</p>
+          </div>
+        </div>
+
+        <!-- Languages & Timezones -->
+        <div class="glass-card p-6">
+          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Languages</h3>
+          <div class="space-y-2 mb-6">
+            <div v-for="item in stats.languages" :key="item.language" class="flex items-center justify-between p-2.5 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+              <span class="text-sm font-medium font-mono">{{ item.language }}</span>
+              <span class="text-xs text-gray-500 font-medium bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded-full">{{ item.count }}</span>
+            </div>
+            <p v-if="!stats.languages.length" class="text-sm text-gray-400 text-center py-4">No data yet</p>
+          </div>
+          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Timezones</h3>
+          <div class="space-y-2">
+            <div v-for="item in stats.timezones" :key="item.timezone" class="flex items-center justify-between p-2.5 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+              <span class="text-sm font-medium truncate max-w-[150px]" :title="item.timezone">{{ item.timezone }}</span>
+              <span class="text-xs text-gray-500 font-medium bg-gray-200 dark:bg-gray-700 px-2 py-0.5 rounded-full">{{ item.count }}</span>
+            </div>
+            <p v-if="!stats.timezones.length" class="text-sm text-gray-400 text-center py-4">No data yet</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Screen Resolutions -->
+      <div class="glass-card p-6 mb-8">
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Screen Resolutions</h3>
+        <div class="flex flex-wrap gap-2">
+          <div v-for="item in stats.screens" :key="item.resolution" 
+            class="px-3 py-1.5 rounded-lg bg-gray-50 dark:bg-gray-800/50 text-sm">
+            <span class="font-mono font-medium">{{ item.resolution }}</span>
+            <span class="text-xs text-gray-400 ml-1.5">({{ item.count }})</span>
+          </div>
+          <p v-if="!stats.screens.length" class="text-sm text-gray-400 text-center py-4 w-full">No data yet</p>
+        </div>
+      </div>
+
+      <!-- Recent Visitors Table -->
+      <div class="glass-card p-6 mb-8">
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Recent Visitors (Last 50)</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-gray-200 dark:border-gray-700">
+                <th class="text-left py-3 px-2 text-xs font-semibold text-gray-500 uppercase">When</th>
+                <th class="text-left py-3 px-2 text-xs font-semibold text-gray-500 uppercase">Page</th>
+                <th class="text-left py-3 px-2 text-xs font-semibold text-gray-500 uppercase">IP</th>
+                <th class="text-left py-3 px-2 text-xs font-semibold text-gray-500 uppercase">Location</th>
+                <th class="text-left py-3 px-2 text-xs font-semibold text-gray-500 uppercase">Device</th>
+                <th class="text-left py-3 px-2 text-xs font-semibold text-gray-500 uppercase">Browser</th>
+                <th class="text-left py-3 px-2 text-xs font-semibold text-gray-500 uppercase">OS</th>
+                <th class="text-left py-3 px-2 text-xs font-semibold text-gray-500 uppercase">Screen</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(v, i) in stats.recent" :key="i" class="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                <td class="py-2.5 px-2 whitespace-nowrap text-xs text-gray-500">{{ formatDate(v.visited_at) }}</td>
+                <td class="py-2.5 px-2 text-xs font-mono max-w-[120px] truncate" :title="v.page_url">{{ v.page_url }}</td>
+                <td class="py-2.5 px-2 font-mono text-xs">{{ maskIP(v.ip_address) }}</td>
+                <td class="py-2.5 px-2 text-xs">
+                  <span v-if="v.city || v.country">{{ [v.city, v.country].filter(Boolean).join(', ') }}</span>
+                  <span v-else class="text-gray-400">—</span>
+                </td>
+                <td class="py-2.5 px-2">
+                  <span class="text-xs px-2 py-0.5 rounded-full font-medium"
+                    :class="{
+                      'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400': v.device_type === 'Mobile',
+                      'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400': v.device_type === 'Desktop',
+                      'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400': v.device_type === 'Tablet',
+                      'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400': !v.device_type,
+                    }">{{ v.device_type || '—' }}</span>
+                </td>
+                <td class="py-2.5 px-2 text-xs">{{ v.browser ? (v.browser + ' ' + (v.browser_version || '').split('.')[0]) : '—' }}</td>
+                <td class="py-2.5 px-2 text-xs">{{ v.os || '—' }}</td>
+                <td class="py-2.5 px-2 text-xs font-mono">{{ v.screen_width && v.screen_height ? v.screen_width + 'x' + v.screen_height : '—' }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <p v-if="!stats.recent.length" class="text-sm text-gray-400 text-center py-8">No visitors recorded yet</p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-gray-200/50 dark:border-gray-800/50 py-6 text-center">
+    <p class="text-sm text-gray-400">&copy; 2026 <a href="https://me.anasabdur.com" class="hover:text-primary-500 transition-colors">anasabdur.com</a></p>
+  </footer>
+</div>
+
+<script>
+const { createApp, ref, watch, onMounted, nextTick } = Vue;
+
+createApp({
+  setup() {
+    const darkMode = ref(
+      localStorage.getItem('qr-darkmode') === 'true' ||
+      (!localStorage.getItem('qr-darkmode') && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    );
+    watch(darkMode, (val) => {
+      document.documentElement.classList.toggle('dark', val);
+      localStorage.setItem('qr-darkmode', val);
+    }, { immediate: true });
+
+    const loading = ref(true);
+    const error = ref('');
+    const stats = ref(null);
+
+    const chartDaily = ref(null);
+    const chartHourly = ref(null);
+    const chartDevices = ref(null);
+    const chartBrowsers = ref(null);
+    const chartOS = ref(null);
+
+    let charts = {};
+
+    const chartColors = [
+      '#6366f1', '#10b981', '#f97316', '#06b6d4', '#d946ef',
+      '#eab308', '#ef4444', '#ec4899', '#8b5cf6', '#14b8a6',
+    ];
+
+    onMounted(() => loadStats());
+
+    async function loadStats() {
+      loading.value = true;
+      error.value = '';
+
+      try {
+        const resp = await fetch('/api/visitor-stats.php', { credentials: 'same-origin' });
+        if (resp.status === 401) { location.replace('/login.html?redirect=' + encodeURIComponent(location.pathname)); return; }
+        if (!resp.ok) throw new Error('Failed to load visitor analytics');
+        stats.value = await resp.json();
+        await nextTick();
+        renderCharts();
+      } catch (e) {
+        error.value = e.message;
+      } finally {
+        loading.value = false;
+      }
+    }
+
+    function renderCharts() {
+      Object.values(charts).forEach(c => c.destroy());
+      charts = {};
+
+      const isDark = darkMode.value;
+      const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+      const textColor = isDark ? '#9ca3af' : '#6b7280';
+
+      // Daily visits
+      if (chartDaily.value && stats.value.per_day.length) {
+        charts.daily = new Chart(chartDaily.value, {
+          type: 'line',
+          data: {
+            labels: stats.value.per_day.map(d => d.date),
+            datasets: [{
+              label: 'Visits',
+              data: stats.value.per_day.map(d => d.count),
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16,185,129,0.1)',
+              fill: true,
+              tension: 0.4,
+              pointRadius: 3,
+              pointBackgroundColor: '#10b981',
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { grid: { color: gridColor }, ticks: { color: textColor, maxTicksLimit: 10, font: { size: 10 } } },
+              y: { grid: { color: gridColor }, ticks: { color: textColor, precision: 0 }, beginAtZero: true },
+            }
+          }
+        });
+      }
+
+      // Hourly
+      if (chartHourly.value && stats.value.per_hour.length) {
+        const hourLabels = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0') + ':00');
+        const hourData = new Array(24).fill(0);
+        stats.value.per_hour.forEach(d => { hourData[parseInt(d.hour)] = parseInt(d.count); });
+
+        charts.hourly = new Chart(chartHourly.value, {
+          type: 'bar',
+          data: {
+            labels: hourLabels,
+            datasets: [{
+              label: 'Visits',
+              data: hourData,
+              backgroundColor: 'rgba(99,102,241,0.6)',
+              borderRadius: 4,
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { grid: { display: false }, ticks: { color: textColor, maxTicksLimit: 12, font: { size: 10 } } },
+              y: { grid: { color: gridColor }, ticks: { color: textColor, precision: 0 }, beginAtZero: true },
+            }
+          }
+        });
+      }
+
+      // Devices doughnut
+      if (chartDevices.value && stats.value.devices.length) {
+        charts.devices = new Chart(chartDevices.value, {
+          type: 'doughnut',
+          data: {
+            labels: stats.value.devices.map(d => d.type),
+            datasets: [{
+              data: stats.value.devices.map(d => d.count),
+              backgroundColor: chartColors.slice(0, stats.value.devices.length),
+              borderWidth: 0,
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { position: 'bottom', labels: { color: textColor, padding: 12, font: { size: 11 } } } },
+          }
+        });
+      }
+
+      // Browsers
+      if (chartBrowsers.value && stats.value.browsers.length) {
+        charts.browsers = new Chart(chartBrowsers.value, {
+          type: 'bar',
+          data: {
+            labels: stats.value.browsers.map(d => d.name),
+            datasets: [{
+              data: stats.value.browsers.map(d => d.count),
+              backgroundColor: chartColors.slice(0, stats.value.browsers.length),
+              borderRadius: 6,
+            }]
+          },
+          options: {
+            responsive: true,
+            indexAxis: 'y',
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { grid: { color: gridColor }, ticks: { color: textColor, precision: 0 }, beginAtZero: true },
+              y: { grid: { display: false }, ticks: { color: textColor, font: { size: 11 } } },
+            }
+          }
+        });
+      }
+
+      // OS
+      if (chartOS.value && stats.value.oses.length) {
+        charts.os = new Chart(chartOS.value, {
+          type: 'bar',
+          data: {
+            labels: stats.value.oses.map(d => d.name),
+            datasets: [{
+              data: stats.value.oses.map(d => d.count),
+              backgroundColor: chartColors.slice(0, stats.value.oses.length),
+              borderRadius: 6,
+            }]
+          },
+          options: {
+            responsive: true,
+            indexAxis: 'y',
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { grid: { color: gridColor }, ticks: { color: textColor, precision: 0 }, beginAtZero: true },
+              y: { grid: { display: false }, ticks: { color: textColor, font: { size: 11 } } },
+            }
+          }
+        });
+      }
+    }
+
+    // Re-render on dark mode change
+    watch(darkMode, () => { if (stats.value) { nextTick(() => renderCharts()); } });
+
+    function formatDate(str) {
+      if (!str) return '—';
+      return new Date(str).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function maskIP(ip) {
+      if (!ip) return '—';
+      const p = ip.split('.');
+      return p.length === 4 ? p[0] + '.' + p[1] + '.' + p[2] + '.***' : ip;
+    }
+
+    function pct(val, total) {
+      return total ? Math.round((val / total) * 100) : 0;
+    }
+
+    function logout() {
+      fetch('/api/login.php', { method: 'DELETE', credentials: 'same-origin' })
+        .finally(() => location.replace('/login.html'));
+    }
+
+    return {
+      darkMode, loading, error, stats,
+      chartDaily, chartHourly, chartDevices, chartBrowsers, chartOS,
+      loadStats, formatDate, maskIP, pct, logout,
+    };
+  }
+}).mount('#app');
+</script>
+<script src="js/tracker.js" defer></script>
+</body>
+</html>

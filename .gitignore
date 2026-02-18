@@ -1,0 +1,15 @@
+# Environment & OS
+.DS_Store
+Thumbs.db
+
+# Credentials — never push real config
+api/config.php
+
+# Archives
+Archive.zip
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

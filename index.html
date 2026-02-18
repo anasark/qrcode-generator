@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free QR Code Generator — Create Custom QR Codes Online | Anas Abdur</title>
+  <meta name="description" content="Free online QR code generator. Create customizable QR codes for URLs, text, email, phone, WiFi, and vCards. Download as PNG, SVG, JPEG or WebP. No signup required." />
+  <meta name="keywords" content="QR code generator, free QR code, custom QR code, QR code maker, URL QR code, WiFi QR code, vCard QR code, QR code online, QR code download" />
+  <meta name="author" content="Anas Abdur" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+  <meta name="theme-color" content="#6366f1" />
+  <link rel="canonical" href="https://qrcode.anasabdur.com/" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://qrcode.anasabdur.com/" />
+  <meta property="og:title" content="Free QR Code Generator — Create Custom QR Codes Online" />
+  <meta property="og:description" content="Generate beautiful, customizable QR codes for URLs, text, email, phone, WiFi, and vCards. Download in multiple formats — completely free." />
+  <meta property="og:image" content="https://qrcode.anasabdur.com/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="QR Code Generator by Anas Abdur" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://qrcode.anasabdur.com/" />
+  <meta name="twitter:title" content="Free QR Code Generator — Create Custom QR Codes Online" />
+  <meta name="twitter:description" content="Generate beautiful, customizable QR codes for URLs, text, email, phone, WiFi, and vCards. Free & no signup." />
+  <meta name="twitter:image" content="https://qrcode.anasabdur.com/og-image.png" />
+
+  <!-- Favicon & PWA -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "QR Code Generator",
+    "url": "https://qrcode.anasabdur.com/",
+    "description": "Free online QR code generator. Create customizable QR codes for URLs, text, email, phone, WiFi, and vCards.",
+    "applicationCategory": "UtilityApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "Anas Abdur",
+      "url": "https://me.anasabdur.com"
+    },
+    "featureList": [
+      "URL QR Codes",
+      "Text QR Codes",
+      "Email QR Codes",
+      "Phone QR Codes",
+      "WiFi QR Codes",
+      "vCard QR Codes",
+      "Custom Colors",
+      "Logo Overlay",
+      "PNG, SVG, JPEG, WebP Download",
+      "Batch Generation"
+    ]
+  }
+  </script>
+
+  <!-- BreadcrumbList Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Anas Abdur",
+        "item": "https://me.anasabdur.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "QR Code Generator",
+        "item": "https://qrcode.anasabdur.com"
+      }
+    ]
+  }
+  </script>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          colors: {
+            primary: { 50:'#eef2ff',100:'#e0e7ff',200:'#c7d2fe',300:'#a5b4fc',400:'#818cf8',500:'#6366f1',600:'#4f46e5',700:'#4338ca',800:'#3730a3',900:'#312e81' },
+            accent:  { 50:'#fdf4ff',100:'#fae8ff',200:'#f5d0fe',300:'#f0abfc',400:'#e879f9',500:'#d946ef',600:'#c026d3',700:'#a21caf',800:'#86198f',900:'#701a75' },
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+  <!-- Vue 3 -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="min-h-screen font-sans transition-colors duration-300 bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-indigo-950 text-gray-800 dark:text-gray-100">
+
+  <div id="app">
+    <!-- Floating Background Orbs -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10" aria-hidden="true">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="sticky top-0 z-50 backdrop-blur-xl bg-white/70 dark:bg-gray-900/70 border-b border-gray-200/50 dark:border-gray-700/50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-lg shadow-primary-500/25">
+              <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM17 14h3v3h-3zM14 17h3v3h-3zM17 20h3v0h-3z"/></svg>
+            </div>
+            <h1 class="text-xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">QR Generator</h1>
+          </div>
+          <div class="flex items-center gap-3">
+            <button @click="darkMode = !darkMode" class="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" :title="darkMode ? 'Light Mode' : 'Dark Mode'">
+              <svg v-if="!darkMode" class="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+              <svg v-else class="w-5 h-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            </button>
+            <a href="/visitors.html" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-colors">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              Visitors
+            </a>
+            <a href="https://me.anasabdur.com" target="_blank" rel="noopener" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+              anasabdur.com
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-12 pb-6 px-4 text-center">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
+          <span class="bg-gradient-to-r from-primary-600 via-accent-500 to-primary-600 bg-clip-text text-transparent">Generate QR Codes</span>
+          <br />
+          <span class="text-gray-700 dark:text-gray-200">in Seconds</span>
+        </h2>
+        <p class="text-lg text-gray-500 dark:text-gray-400 max-w-xl mx-auto">Create beautiful, customizable QR codes for URLs, text, emails, phone numbers, WiFi networks, and contact cards — completely free.</p>
+      </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+
+        <!-- Left Panel — Input & Options -->
+        <div class="lg:col-span-3 space-y-6">
+
+          <!-- QR Type Selector -->
+          <div class="glass-card p-6">
+            <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">QR Code Type</h3>
+            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
+              <button v-for="t in qrTypes" :key="t.id"
+                @click="qrType = t.id"
+                :class="[
+                  'flex flex-col items-center gap-1.5 p-3 rounded-xl text-xs font-medium transition-all duration-200',
+                  qrType === t.id
+                    ? 'bg-gradient-to-br from-primary-500 to-accent-500 text-white shadow-lg shadow-primary-500/25 scale-105'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+                ]">
+                <span class="text-lg" v-html="t.icon"></span>
+                <span>{{ t.label }}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Content Input -->
+          <div class="glass-card p-6">
+            <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">Content</h3>
+
+            <!-- URL -->
+            <div v-if="qrType === 'url'">
+              <label class="form-label">Website URL</label>
+              <input type="url" v-model="content.url" placeholder="https://example.com" class="form-input" @input="generateQR" />
+              <div class="mt-3 flex items-center justify-between">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" v-model="useShortUrl" class="form-checkbox" @change="generateQR" />
+                  <span class="text-sm text-gray-600 dark:text-gray-400">Use trackable short link</span>
+                </label>
+                <span v-if="isShortening" class="text-xs text-primary-500 animate-pulse">Shortening...</span>
+              </div>
+              <!-- Short URL Display -->
+              <div v-if="shortUrl" class="mt-3 flex items-center gap-2 p-3 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+                <svg class="w-4 h-4 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                <span class="text-sm text-green-700 dark:text-green-300 font-mono truncate flex-1">{{ shortUrl }}</span>
+                <button @click="navigator.clipboard.writeText(shortUrl).then(() => showToast('Short URL copied!', 'success'))" class="text-xs text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 font-medium flex-shrink-0">Copy</button>
+                <a :href="'/stats.html?code=' + shortUrl.split('/r/')[1]" class="text-xs text-primary-500 hover:text-primary-600 font-medium flex-shrink-0 ml-1">Analytics</a>
+              </div>
+              <p class="text-xs text-gray-400 mt-2" v-if="useShortUrl">QR will redirect via <strong>qrcode.anasabdur.com/r/...</strong> with scan tracking &middot; <a href="/stats.html" class="text-primary-500 hover:underline">View Dashboard</a></p>
+            </div>
+
+            <!-- Text -->
+            <div v-if="qrType === 'text'">
+              <label class="form-label">Your Text</label>
+              <textarea v-model="content.text" placeholder="Enter any text here..." rows="4" class="form-input resize-none" @input="generateQR"></textarea>
+              <p class="text-xs text-gray-400 mt-1 text-right">{{ (content.text || '').length }} characters</p>
+            </div>
+
+            <!-- Email -->
+            <div v-if="qrType === 'email'" class="space-y-4">
+              <div>
+                <label class="form-label">Email Address</label>
+                <input type="email" v-model="content.email" placeholder="hello@example.com" class="form-input" @input="generateQR" />
+              </div>
+              <div>
+                <label class="form-label">Subject (optional)</label>
+                <input type="text" v-model="content.emailSubject" placeholder="Email subject" class="form-input" @input="generateQR" />
+              </div>
+              <div>
+                <label class="form-label">Body (optional)</label>
+                <textarea v-model="content.emailBody" placeholder="Email body..." rows="3" class="form-input resize-none" @input="generateQR"></textarea>
+              </div>
+            </div>
+
+            <!-- Phone -->
+            <div v-if="qrType === 'phone'">
+              <label class="form-label">Phone Number</label>
+              <input type="tel" v-model="content.phone" placeholder="+1234567890" class="form-input" @input="generateQR" />
+            </div>
+
+            <!-- WiFi -->
+            <div v-if="qrType === 'wifi'" class="space-y-4">
+              <div>
+                <label class="form-label">Network Name (SSID)</label>
+                <input type="text" v-model="content.wifiSsid" placeholder="MyWiFiNetwork" class="form-input" @input="generateQR" />
+              </div>
+              <div>
+                <label class="form-label">Password</label>
+                <div class="relative">
+                  <input :type="showWifiPass ? 'text' : 'password'" v-model="content.wifiPassword" placeholder="Password" class="form-input pr-10" @input="generateQR" />
+                  <button @click="showWifiPass = !showWifiPass" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <svg v-if="!showWifiPass" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    <svg v-else class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/></svg>
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label class="form-label">Security Type</label>
+                <select v-model="content.wifiEncryption" class="form-input" @change="generateQR">
+                  <option value="WPA">WPA/WPA2</option>
+                  <option value="WEP">WEP</option>
+                  <option value="nopass">None</option>
+                </select>
+              </div>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" v-model="content.wifiHidden" class="form-checkbox" @change="generateQR" />
+                <span class="text-sm text-gray-600 dark:text-gray-400">Hidden network</span>
+              </label>
+            </div>
+
+            <!-- vCard -->
+            <div v-if="qrType === 'vcard'" class="space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="form-label">First Name</label>
+                  <input type="text" v-model="content.vcardFirstName" placeholder="John" class="form-input" @input="generateQR" />
+                </div>
+                <div>
+                  <label class="form-label">Last Name</label>
+                  <input type="text" v-model="content.vcardLastName" placeholder="Doe" class="form-input" @input="generateQR" />
+                </div>
+              </div>
+              <div>
+                <label class="form-label">Organization</label>
+                <input type="text" v-model="content.vcardOrg" placeholder="Company Name" class="form-input" @input="generateQR" />
+              </div>
+              <div>
+                <label class="form-label">Job Title</label>
+                <input type="text" v-model="content.vcardTitle" placeholder="Software Engineer" class="form-input" @input="generateQR" />
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="form-label">Phone</label>
+                  <input type="tel" v-model="content.vcardPhone" placeholder="+1234567890" class="form-input" @input="generateQR" />
+                </div>
+                <div>
+                  <label class="form-label">Email</label>
+                  <input type="email" v-model="content.vcardEmail" placeholder="john@example.com" class="form-input" @input="generateQR" />
+                </div>
+              </div>
+              <div>
+                <label class="form-label">Website</label>
+                <input type="url" v-model="content.vcardUrl" placeholder="https://example.com" class="form-input" @input="generateQR" />
+              </div>
+              <div>
+                <label class="form-label">Address</label>
+                <input type="text" v-model="content.vcardAddress" placeholder="123 Main St, City, Country" class="form-input" @input="generateQR" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Customization -->
+          <div class="glass-card p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Customize</h3>
+              <button @click="showAdvanced = !showAdvanced" class="text-xs text-primary-500 hover:text-primary-600 font-medium transition-colors">
+                {{ showAdvanced ? 'Simple' : 'Advanced' }}
+              </button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <!-- Foreground Color -->
+              <div>
+                <label class="form-label">Foreground Color</label>
+                <div class="flex items-center gap-3">
+                  <div class="relative">
+                    <input type="color" v-model="options.colorDark" class="color-picker" @input="generateQR" />
+                  </div>
+                  <input type="text" v-model="options.colorDark" class="form-input font-mono text-sm uppercase" maxlength="7" @input="generateQR" />
+                </div>
+              </div>
+
+              <!-- Background Color -->
+              <div>
+                <label class="form-label">Background Color</label>
+                <div class="flex items-center gap-3">
+                  <div class="relative">
+                    <input type="color" v-model="options.colorLight" class="color-picker" @input="generateQR" />
+                  </div>
+                  <input type="text" v-model="options.colorLight" class="form-input font-mono text-sm uppercase" maxlength="7" @input="generateQR" />
+                </div>
+              </div>
+
+              <!-- Size -->
+              <div>
+                <label class="form-label">Size: {{ options.width }}px</label>
+                <input type="range" v-model.number="options.width" min="128" max="1024" step="32" class="form-range" @input="generateQR" />
+                <div class="flex justify-between text-xs text-gray-400 mt-1">
+                  <span>128px</span>
+                  <span>1024px</span>
+                </div>
+              </div>
+
+              <!-- Margin -->
+              <div>
+                <label class="form-label">Margin: {{ options.margin }}</label>
+                <input type="range" v-model.number="options.margin" min="0" max="10" step="1" class="form-range" @input="generateQR" />
+                <div class="flex justify-between text-xs text-gray-400 mt-1">
+                  <span>0</span>
+                  <span>10</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Advanced Options -->
+            <div v-show="showAdvanced" class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 space-y-6">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <!-- Error Correction -->
+                <div>
+                  <label class="form-label">Error Correction Level</label>
+                  <select v-model="options.errorCorrectionLevel" class="form-input" @change="generateQR">
+                    <option value="L">Low (7%)</option>
+                    <option value="M">Medium (15%)</option>
+                    <option value="Q">Quartile (25%)</option>
+                    <option value="H">High (30%)</option>
+                  </select>
+                  <p class="text-xs text-gray-400 mt-1">Higher = more recoverable, but denser code</p>
+                </div>
+
+                <!-- Download Format -->
+                <div>
+                  <label class="form-label">Download Format</label>
+                  <select v-model="downloadFormat" class="form-input">
+                    <option value="png">PNG Image</option>
+                    <option value="svg">SVG Vector</option>
+                    <option value="jpeg">JPEG Image</option>
+                    <option value="webp">WebP Image</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Logo Upload -->
+              <div>
+                <label class="form-label">Center Logo (optional)</label>
+                <div class="flex items-center gap-4">
+                  <label class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer transition-colors text-sm font-medium text-gray-600 dark:text-gray-400">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    Upload Logo
+                    <input type="file" accept="image/*" @change="handleLogoUpload" class="hidden" />
+                  </label>
+                  <button v-if="logoDataUrl" @click="removeLogo" class="text-xs text-red-500 hover:text-red-600 font-medium transition-colors">Remove</button>
+                  <img v-if="logoDataUrl" :src="logoDataUrl" class="w-8 h-8 rounded-lg object-cover ring-2 ring-primary-200 dark:ring-primary-800" />
+                </div>
+                <p class="text-xs text-gray-400 mt-1">Use with High error correction for best results</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Presets -->
+          <div class="glass-card p-6">
+            <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">Color Presets</h3>
+            <div class="flex flex-wrap gap-2">
+              <button v-for="preset in colorPresets" :key="preset.name"
+                @click="applyPreset(preset)"
+                class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all hover:scale-105"
+                :title="preset.name">
+                <span class="w-4 h-4 rounded-full ring-1 ring-gray-300 dark:ring-gray-600" :style="{ background: preset.fg }"></span>
+                <span class="w-4 h-4 rounded-full ring-1 ring-gray-300 dark:ring-gray-600" :style="{ background: preset.bg }"></span>
+                <span class="text-gray-600 dark:text-gray-400">{{ preset.name }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel — Preview & Download -->
+        <div class="lg:col-span-2">
+          <div class="sticky top-24 space-y-6">
+            <!-- QR Preview -->
+            <div class="glass-card p-8 text-center">
+              <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-6">Preview</h3>
+
+              <div class="relative inline-block">
+                <!-- QR Canvas Container -->
+                <div class="qr-preview-container rounded-2xl p-4 bg-white dark:bg-gray-800 shadow-inner inline-block" :style="{ backgroundColor: options.colorLight }">
+                  <div v-if="!qrDataUrl" class="flex flex-col items-center justify-center w-48 h-48 text-gray-300 dark:text-gray-600">
+                    <svg class="w-16 h-16 mb-2 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM17 14h3v3h-3zM14 17h3v3h-3zM17 20h3v0h-3z"/></svg>
+                    <span class="text-sm">Enter content to generate</span>
+                  </div>
+                  <canvas v-show="qrDataUrl && !logoDataUrl" ref="qrCanvas" class="max-w-full h-auto rounded-lg"></canvas>
+                  <img v-if="qrDataUrl && logoDataUrl" :src="qrWithLogoUrl" class="max-w-full h-auto rounded-lg" />
+                  <img v-if="qrDataUrl && !logoDataUrl" :src="qrDataUrl" class="hidden" />
+                </div>
+
+                <!-- Animated scan line -->
+                <div v-if="qrDataUrl" class="scan-line"></div>
+              </div>
+
+              <p v-if="qrDataUrl" class="text-xs text-gray-400 mt-4">{{ options.width }} × {{ options.width }}px &middot; {{ options.errorCorrectionLevel }} correction</p>
+              <p v-if="shortUrl && qrDataUrl" class="text-xs text-primary-500 mt-1 font-medium">Redirects via short link</p>
+            </div>
+
+            <!-- Download Buttons -->
+            <div class="glass-card p-6" v-if="qrDataUrl">
+              <div class="grid grid-cols-2 gap-3">
+                <button @click="downloadQR('png')" class="btn-primary">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                  PNG
+                </button>
+                <button @click="downloadQR('svg')" class="btn-secondary">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                  SVG
+                </button>
+                <button @click="downloadQR('jpeg')" class="btn-outline">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                  JPEG
+                </button>
+                <button @click="downloadQR('webp')" class="btn-outline">
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                  WebP
+                </button>
+              </div>
+              <button @click="copyToClipboard" class="w-full mt-3 btn-ghost">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                {{ copied ? 'Copied!' : 'Copy to Clipboard' }}
+              </button>
+            </div>
+
+            <!-- Batch QR Generator -->
+            <div class="glass-card p-6">
+              <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">Batch Generate</h3>
+              <p class="text-xs text-gray-400 mb-3">Enter multiple URLs/texts, one per line</p>
+              <textarea v-model="batchInput" rows="4" placeholder="https://example1.com&#10;https://example2.com&#10;https://example3.com" class="form-input resize-none text-sm mb-3"></textarea>
+              <button @click="generateBatch" :disabled="!batchInput.trim()" class="w-full btn-primary disabled:opacity-40 disabled:cursor-not-allowed">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                Generate & Download All
+              </button>
+            </div>
+
+            <!-- History -->
+            <div class="glass-card p-6" v-if="history.length > 0">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">History</h3>
+                <button @click="clearHistory" class="text-xs text-red-500 hover:text-red-600 font-medium transition-colors">Clear</button>
+              </div>
+              <div class="space-y-2 max-h-60 overflow-y-auto pr-1 custom-scrollbar">
+                <button v-for="(item, index) in history" :key="index"
+                  @click="loadFromHistory(item)"
+                  class="w-full flex items-center gap-3 p-2.5 rounded-xl text-left bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors group">
+                  <img :src="item.dataUrl" class="w-10 h-10 rounded-lg flex-shrink-0" />
+                  <div class="min-w-0 flex-1">
+                    <p class="text-xs font-medium text-gray-700 dark:text-gray-300 truncate">{{ item.label }}</p>
+                    <p class="text-[10px] text-gray-400">{{ item.type.toUpperCase() }} &middot; {{ item.timestamp }}</p>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-200/50 dark:border-gray-800/50 py-8">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p class="text-sm text-gray-400 dark:text-gray-600">QR Code Generator &middot; Free &amp; Open Source &middot; No data sent to any server</p>
+          <div class="flex items-center gap-4 text-sm">
+            <a href="https://me.anasabdur.com" target="_blank" rel="noopener" class="text-gray-400 dark:text-gray-600 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">Made by Anas Abdur</a>
+          </div>
+        </div>
+        <p class="text-center text-xs text-gray-300 dark:text-gray-700 mt-4">&copy; 2026 <a href="https://me.anasabdur.com" target="_blank" rel="noopener" class="hover:text-primary-500 transition-colors">anasabdur.com</a>. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <transition name="toast">
+      <div v-if="toast.show" class="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-2xl shadow-2xl text-sm font-medium"
+        :class="toast.type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white'">
+        <svg v-if="toast.type === 'success'" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        <svg v-else class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        {{ toast.message }}
+      </div>
+    </transition>
+  </div>
+
+  <!-- QRCode Library (self-hosted UMD) -->
+  <script src="js/qrcode.min.js?v=1.4.4"></script>
+  <!-- App Script -->
+  <script src="js/app.js?v=2.1"></script>
+  <!-- Visitor Tracking -->
+  <script src="js/tracker.js?v=1.1" defer></script>
+</body>
+</html>

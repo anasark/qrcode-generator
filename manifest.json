@@ -1,0 +1,16 @@
+{
+  "name": "QR Code Generator",
+  "short_name": "QR Generator",
+  "description": "Free online QR code generator. Create customizable QR codes for URLs, text, email, phone, WiFi, and vCards.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#6366f1",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
