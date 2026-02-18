@@ -26,6 +26,8 @@
   <link rel="stylesheet" href="/css/style.css" />
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <!-- QRCode Library -->
+  <script src="/js/qrcode.min.js"></script>
   <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 </head>
 <body class="min-h-screen font-sans bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-indigo-950 text-gray-800 dark:text-gray-100">
@@ -82,10 +84,20 @@
       <!-- Link Info Bar -->
       <div class="glass-card p-5 mb-6">
         <div class="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p class="text-sm text-gray-500 dark:text-gray-400">Tracking</p>
-            <p class="text-lg font-bold font-mono text-primary-600 dark:text-primary-400">{{ stats.link.short_url }}</p>
-            <p class="text-sm text-gray-500 mt-1">Target: <a :href="stats.link.target_url" target="_blank" class="text-primary-500 hover:underline">{{ stats.link.target_url }}</a></p>
+          <div class="flex items-center gap-5">
+            <!-- QR Code Preview -->
+            <div class="flex-shrink-0 bg-white rounded-xl p-2 shadow-inner">
+              <canvas ref="statsQrCanvas" width="100" height="100" class="w-24 h-24 rounded-lg"></canvas>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Tracking</p>
+              <p class="text-lg font-bold font-mono text-primary-600 dark:text-primary-400">{{ stats.link.short_url }}</p>
+              <p class="text-sm text-gray-500 mt-1">Target: <a :href="stats.link.target_url" target="_blank" class="text-primary-500 hover:underline break-all">{{ stats.link.target_url }}</a></p>
+              <button @click="downloadStatsQR" class="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 hover:bg-primary-100 dark:hover:bg-primary-900/40 transition-colors">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                Download QR
+              </button>
+            </div>
           </div>
           <div class="text-right text-xs text-gray-400">
             <p>Created: {{ formatDate(stats.link.created_at) }}</p>
@@ -280,8 +292,7 @@ createApp({
     const chartDevices = ref(null);
     const chartBrowsers = ref(null);
     const chartOS = ref(null);
-
-    // Chart instances
+    const statsQrCanvas = ref(null);
     let charts = {};
 
     // Check URL params on load
@@ -333,6 +344,7 @@ createApp({
         // Render charts after DOM updates
         await nextTick();
         renderCharts();
+        renderStatsQR(stats.value.link.short_url);
       } catch (e) {
         error.value = e.message;
         stats.value = null;
@@ -474,11 +486,43 @@ createApp({
       return Math.round((value / total) * 100);
     }
 
+    async function renderStatsQR(shortUrl) {
+      if (!statsQrCanvas.value || !shortUrl) return;
+      try {
+        await QRCode.toCanvas(statsQrCanvas.value, shortUrl, {
+          width: 200,
+          margin: 1,
+          color: { dark: '#1e1b4b', light: '#ffffff' },
+          errorCorrectionLevel: 'M',
+        });
+      } catch (e) {
+        console.warn('QR render failed:', e);
+      }
+    }
+
+    function downloadStatsQR() {
+      if (!statsQrCanvas.value) return;
+      const offscreen = document.createElement('canvas');
+      const shortUrl = stats.value?.link?.short_url;
+      if (!shortUrl) return;
+      QRCode.toCanvas(offscreen, shortUrl, {
+        width: 512,
+        margin: 2,
+        color: { dark: '#1e1b4b', light: '#ffffff' },
+        errorCorrectionLevel: 'M',
+      }).then(() => {
+        const a = document.createElement('a');
+        a.href = offscreen.toDataURL('image/png');
+        a.download = `qr-${stats.value.link.code}.png`;
+        a.click();
+      });
+    }
+
     return {
       darkMode, searchCode, loading, error, stats,
-      chartDaily, chartDevices, chartBrowsers, chartOS,
+      chartDaily, chartDevices, chartBrowsers, chartOS, statsQrCanvas,
       topCountry, topDevice,
-      loadStats, formatDate, maskIP, getPercent,
+      loadStats, formatDate, maskIP, getPercent, downloadStatsQR,
     };
   }
 }).mount('#app');
