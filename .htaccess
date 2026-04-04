@@ -7,6 +7,17 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 # Redirect short URLs: /r/abc123 → r/index.php?code=abc123
 RewriteRule ^r/([a-zA-Z0-9]+)$ r/index.php?code=$1 [L,QSA]
 
+# Prevent caching of /r/ redirect URLs (critical for scan tracking)
+# and dashboard pages (stats/visitors should always show fresh data)
+<IfModule mod_headers.c>
+    SetEnvIf Request_URI "^/r/" no_cache_redirect
+    SetEnvIf Request_URI "stats\.html$" no_cache_redirect
+    SetEnvIf Request_URI "visitors\.html$" no_cache_redirect
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0" env=no_cache_redirect
+    Header set Pragma "no-cache" env=no_cache_redirect
+    Header set Expires "0" env=no_cache_redirect
+</IfModule>
+
 # Don't rewrite existing files/directories
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

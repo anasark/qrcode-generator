@@ -1,0 +1,14 @@
+# Disable ALL caching for redirect handler (critical for scan tracking)
+<IfModule mod_headers.c>
+    Header set Cache-Control "private, no-store, no-cache, must-revalidate, max-age=0, s-maxage=0"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+    Header set X-LiteSpeed-Cache-Control "no-cache"
+    Header set Vary "*"
+</IfModule>
+
+# LiteSpeed-specific: disable cache for this directory
+<IfModule LiteSpeed>
+    CacheDisable public /
+    CacheDisable private /
+</IfModule>
